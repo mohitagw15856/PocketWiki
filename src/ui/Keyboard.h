@@ -65,21 +65,21 @@ class Keyboard {
     drawText(c, x + pad, y + pad, shown, 1, 0);
     c.hLine(x, y + lineHeight(1) + pad, w, true);
 
-    // Key grid.
-    const int gridTop = y + lineHeight(1) + pad + 3;
-    const int cellW = 16;
-    const int cellH = lineHeight(1) + 2;
+    // Key grid. The action row keys carry short multi-letter labels, so the
+    // cells are wide enough to keep them apart.
+    const int gridTop = y + lineHeight(1) + pad + 4;
+    const int cellW = 22;
+    const int cellH = lineHeight(1) + 4;
     for (int r = 0; r < rowCount(); ++r) {
       for (int col = 0; col < colCount(r); ++col) {
         const Key& k = rows_[r][col];
         const int kx = x + pad + col * cellW;
         const int ky = gridTop + r * cellH;
         const bool sel = (r == row_ && col == col_);
-        if (sel) c.fillRect(kx - 1, ky - 1, cellW, cellH, true);
-        // Selected key: draw label in paper colour by leaving it blank then
-        // inverting is complex on 1bpp, so draw a border box instead.
-        if (sel) c.drawRect(kx - 1, ky - 1, cellW, cellH, false);
-        drawText(c, kx, ky, k.label, 1, 0);
+        if (sel) c.fillRect(kx - 2, ky - 2, cellW, cellH, true);  // black key cap
+        // Selected key draws its label in paper colour (white) so it stays
+        // readable on the filled cap.
+        drawText(c, kx, ky, k.label, 1, 0, !sel);
       }
     }
   }

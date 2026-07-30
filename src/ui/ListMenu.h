@@ -74,15 +74,13 @@ class ListMenu {
       if (idx >= static_cast<int>(items_.size())) break;
       const int ry = y + i * rowH;
       const bool sel = (idx == selected_);
-      if (sel) {
-        c.fillRect(x, ry, w, rowH, true);
-        c.drawRect(x, ry, w, rowH, false);
-      }
-      // Draw the label; when selected, a filled bar sits behind it, so draw a
-      // caret marker to the left instead of relying on inverse text.
+      if (sel) c.fillRect(x, ry, w, rowH, true);  // black bar behind the row
+      // Selected rows draw in paper colour (white) so the label stays legible on
+      // the filled bar; unselected rows draw normal ink.
       const int textY = ry + (rowH - kFontHeight) / 2;
-      if (sel) drawText(c, x + 2, textY, std::string(">"), 1, 0);
-      drawText(c, x + 12, textY, items_[idx], 1, sel ? kStyleBold : 0);
+      const bool ink = !sel;
+      if (sel) drawText(c, x + 3, textY, std::string(">"), 1, 0, ink);
+      drawText(c, x + 14, textY, items_[idx], 1, sel ? kStyleBold : 0, ink);
     }
     // Scrollbar hint.
     if (static_cast<int>(items_.size()) > rows) {

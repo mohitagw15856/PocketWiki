@@ -35,8 +35,10 @@ inline int measureText(const std::string& s, int scale, uint8_t style) {
 inline int lineHeight(int scale) { return kFontHeight * scale + 2 * scale; }
 
 // Draw one character; returns its advance. Characters outside the printable
-// range fall back to '?' via font5x7Columns.
-inline int drawChar(Canvas& c, int x, int y, char ch, int scale, uint8_t style) {
+// range fall back to '?' via font5x7Columns. When `ink` is false the glyph is
+// drawn in paper colour (white), for legible text over a filled (selected)
+// background.
+inline int drawChar(Canvas& c, int x, int y, char ch, int scale, uint8_t style, bool ink = true) {
   const uint8_t* cols = font5x7Columns(ch);
   const bool bold = (style & kStyleBold) != 0;
   const bool italic = (style & kStyleItalic) != 0;
@@ -48,21 +50,21 @@ inline int drawChar(Canvas& c, int x, int y, char ch, int scale, uint8_t style) 
       const int shear = italic ? ((kFontHeight - 1 - row) * scale) / 3 : 0;
       const int px = x + col * scale + shear;
       const int py = y + row * scale;
-      c.fillRect(px, py, scale, scale, /*black=*/true);
-      if (bold) c.fillRect(px + 1, py, scale, scale, /*black=*/true);
+      c.fillRect(px, py, scale, scale, /*black=*/ink);
+      if (bold) c.fillRect(px + 1, py, scale, scale, /*black=*/ink);
     }
   }
   return charAdvance(scale, style);
 }
 
 // Draw a string left to right; returns the x advance used.
-inline int drawText(Canvas& c, int x, int y, const std::string& s, int scale, uint8_t style) {
+inline int drawText(Canvas& c, int x, int y, const std::string& s, int scale, uint8_t style, bool ink = true) {
   int cx = x;
   for (size_t i = 0; i < s.size(); ++i) {
     if ((static_cast<uint8_t>(s[i]) & 0xC0) == 0x80) continue;  // skip UTF-8 tails
     char ch = s[i];
     if (static_cast<uint8_t>(ch) > 0x7E || static_cast<uint8_t>(ch) < 0x20) ch = '?';
-    cx += drawChar(c, cx, y, ch, scale, style);
+    cx += drawChar(c, cx, y, ch, scale, style, ink);
   }
   return cx - x;
 }
