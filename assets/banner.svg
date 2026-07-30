@@ -17,7 +17,7 @@
   <rect width="1280" height="360" fill="url(#dots)"/>
 
   <!-- device mock on the right -->
-  <g transform="translate(890,44)">
+  <g transform="translate(936,44)">
     <rect x="0" y="0" width="300" height="272" rx="22" fill="#23262c" stroke="#3a4049" stroke-width="2"/>
     <rect x="22" y="22" width="256" height="200" rx="6" fill="url(#paper)" stroke="#0e1013" stroke-width="2"/>
     <rect x="22" y="22" width="256" height="30" fill="#23262c"/>
@@ -39,17 +39,19 @@
     <text x="90" y="150" fill="#ffffff" font-size="82" font-weight="700" letter-spacing="1">Pocket<tspan fill="#4f80ff">Wiki</tspan></text>
   </g>
   <g font-family="'Segoe UI','Helvetica Neue',Arial,sans-serif">
-    <text x="94" y="196" fill="#c7cdd6" font-size="26">Offline reference reader for Xteink X4 and X3 e-readers</text>
-    <text x="94" y="232" fill="#8b93a1" font-size="19">Browse, search and read compressed article collections from the SD card. ESP32-C3. Built on inkkit.</text>
+    <text x="94" y="196" fill="#c7cdd6" font-size="25">Offline reference reader for Xteink X4 and X3 e-readers</text>
+    <text x="94" y="230" fill="#8b93a1" font-size="18">Read compressed article collections from the SD card. No Wi-Fi needed.</text>
 
     <!-- feature chips -->
     <g font-size="16" fill="#cfd6df">
-      <rect x="94" y="262" width="150" height="34" rx="17" fill="#2a3340" stroke="#3a4a5e"/>
-      <text x="112" y="284">Offline first</text>
-      <rect x="258" y="262" width="176" height="34" rx="17" fill="#2a3340" stroke="#3a4a5e"/>
-      <text x="276" y="284">Incremental search</text>
-      <rect x="448" y="262" width="178" height="34" rx="17" fill="#2a3340" stroke="#3a4a5e"/>
-      <text x="466" y="284">Internal links</text>
+      <rect x="94" y="258" width="140" height="34" rx="17" fill="#2a3340" stroke="#3a4a5e"/>
+      <text x="110" y="280">Offline first</text>
+      <rect x="248" y="258" width="184" height="34" rx="17" fill="#2a3340" stroke="#3a4a5e"/>
+      <text x="264" y="280">Incremental search</text>
+      <rect x="446" y="258" width="150" height="34" rx="17" fill="#2a3340" stroke="#3a4a5e"/>
+      <text x="462" y="280">Internal links</text>
+      <rect x="610" y="258" width="118" height="34" rx="17" fill="#2a3340" stroke="#3a4a5e"/>
+      <text x="626" y="280">ESP32-C3</text>
     </g>
   </g>
 </svg>
