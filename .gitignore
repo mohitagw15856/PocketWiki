@@ -1,0 +1,38 @@
+# Reference clone of CrossPoint Reader, kept locally for study only (not part of this repo)
+/reference/
+
+# PlatformIO
+.pio/
+.pioenvs/
+.piolibdeps/
+.cache/
+platformio.local.ini
+
+# Native test builds
+/test/build/
+/build/
+*.o
+*.a
+*.out
+
+# Python companion
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+dist/
+build/
+
+# Built archives (the checked-in sample lives under companion/, generated ones are ignored)
+*.pwa
+!companion/sample/*.pwa
+
+# Editor / OS noise
+.vscode/
+.idea/
+.DS_Store
+*.swp

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240" role="img" aria-label="PocketWiki logo">
+  <defs>
+    <linearGradient id="paper" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#eef1f4"/>
+    </linearGradient>
+  </defs>
+  <rect x="8" y="8" width="224" height="224" rx="40" fill="#1b1f24"/>
+  <!-- e-ink screen / card -->
+  <rect x="44" y="40" width="152" height="150" rx="12" fill="url(#paper)" stroke="#0e1013" stroke-width="3"/>
+  <!-- header bar -->
+  <rect x="44" y="40" width="152" height="26" rx="12" fill="#1b1f24"/>
+  <rect x="44" y="54" width="152" height="12" fill="#1b1f24"/>
+  <rect x="56" y="48" width="70" height="10" rx="3" fill="#ffffff"/>
+  <!-- article lines -->
+  <g fill="#1b1f24">
+    <rect x="58" y="82" width="124" height="8" rx="2"/>
+    <rect x="58" y="98" width="110" height="8" rx="2"/>
+    <!-- internal link line in accent -->
+    <rect x="58" y="114" width="70" height="8" rx="2" fill="#4f80ff"/>
+    <rect x="58" y="130" width="120" height="8" rx="2"/>
+    <rect x="58" y="146" width="96" height="8" rx="2"/>
+  </g>
+  <!-- magnifier for search -->
+  <circle cx="168" cy="158" r="22" fill="none" stroke="#4f80ff" stroke-width="7"/>
+  <line x1="183" y1="173" x2="198" y2="188" stroke="#4f80ff" stroke-width="9" stroke-linecap="round"/>
+  <!-- chin button -->
+  <circle cx="120" cy="210" r="9" fill="none" stroke="#5b6270" stroke-width="4"/>
+</svg>
