@@ -13,13 +13,21 @@ is almost always confined to the single file named.
 
 ## Build and SDK wiring
 
-- [ ] **freeink-sdk builds via PlatformIO.** `pio run -e xteink_x4` completes.
-      inkkit and the SDK are pulled as `lib_deps`. Until this passes, the
-      firmware build CI job stays non blocking (see `.github/workflows/ci.yml`).
-- [ ] **Hardware singletons.** `src/main.cpp` declares `extern HalDisplay
-      display; extern HalGPIO gpio; extern HalPowerManager powerManager;`.
-      Confirm the SDK's actual instance names and types; adjust `main.cpp` (and,
-      if needed, the matching inkkit wrapper) to match.
+- [ ] **Firmware builds via PlatformIO.** `pio run -e xteink_x4` completes.
+      inkkit and the firmware compile against the HAL interface in `hal/`. This
+      is verified in CI; the shim makes it a real compile check.
+- [ ] **Wire the HAL to the freeink-sdk (the main on-device task).** `hal/`
+      currently provides safe no-op bodies so the firmware compiles and links.
+      Replace them with implementations backed by the freeink-sdk libraries, and
+      add those libraries to `platformio.ini` `lib_deps`:
+      - `HalStorage` and `HalFile` to `SDCardManager` (read archives from SD).
+      - `HalDisplay` to `FreeInkDisplay` (push the framebuffer to the panel).
+      - `HalGPIO` to `InputManager` (real button edges and wake reason).
+      - `HalPowerManager` to `PowerManager` (deep sleep).
+      Each `hal/*.h` method carries a `TODO(hardware-test)` naming its target.
+- [ ] **Hardware singletons.** `src/main.cpp` and `hal/hal_shim.cpp` define the
+      `display`, `gpio`, `powerManager` and `Storage` globals. When wiring the
+      real HAL, confirm the freeink-sdk's own instance names and construction.
 - [ ] **inkkit inherited SDK TODOs.** inkkit's own `TODO(hardware-test)` notes
       cover the display method and constant names, the Storage and `HalFile`
       API (including directory iteration and append flags), the GPIO enums and

@@ -10,6 +10,28 @@ Where PocketWiki had to provide something itself, it did so in its **portable
 core** (`core/pocketwiki/`) so the code is host tested and could move into inkkit
 later with little change.
 
+## 0. The HAL layer inkkit is written against (most important)
+
+inkkit includes `<HalStorage.h>`, `<HalDisplay.h>`, `<HalGPIO.h>` and
+`<HalPowerManager.h>` and talks to global `Storage`, `display`, `gpio` and
+`powerManager` singletons of those types. Those headers are **not** part of
+inkkit, and they are **not** part of the freeink-sdk either: the freeink-sdk
+ships individual hardware libraries (FreeInkDisplay, SDCardManager, InputManager,
+PowerManager and so on), and the unifying `Hal*` layer lives in the CrossPoint
+firmware's own `lib/hal`. inkkit neither bundles this HAL nor declares it as a
+dependency, so a fresh inkkit based firmware fails to compile with
+`fatal error: HalStorage.h: No such file or directory`.
+
+PocketWiki works around this by providing the HAL interface itself in `hal/`,
+derived purely from the calls inkkit makes (no CrossPoint code is copied). The
+method bodies are a safe compile shim, so the firmware compiles and links for the
+ESP32-C3 target; wiring each method to the matching freeink-sdk library is the
+remaining on-device work (see `docs/HARDWARE_TESTING.md`).
+
+The clean fix belongs in inkkit: either bundle a small default HAL, or declare
+the freeink-sdk libraries as dependencies and ship the thin `Hal*` adapters so
+every consumer does not have to reinvent them.
+
 ## 1. Text and glyph rendering
 
 inkkit exposes the raw 1-bit framebuffer through `inkkit::Display` but provides
@@ -58,6 +80,7 @@ dependency working as intended: the portable `PwaReader` takes an
 
 | Need | Provided by inkkit? | PocketWiki location |
 | --- | --- | --- |
+| HAL headers (`Hal*.h`, singletons) | No (not shipped, not declared) | `hal/` (compile shim) |
 | Framebuffer access | Yes | `inkkit::Display` |
 | SD byte streaming | Yes | `inkkit::SdFileReader` |
 | Buttons, power | Yes | `inkkit::Buttons`, `inkkit::Power` |

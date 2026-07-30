@@ -236,6 +236,7 @@ are checked against each other on every build.
 | `companion/` | Python CLI to build and inspect archives, plus its tests |
 | `core/` | Portable, host tested C++ (archive reader, decoder, layout, models) |
 | `src/` | Device firmware (screens, keyboard, inkkit wiring) |
+| `hal/` | HAL interface inkkit needs but does not ship (compile shim) |
 | `test/` | Native test build (CMake) |
 | `tools/` | Font generator and the screenshot and media renderers |
 | `docs/` | Format specification, gaps, hardware testing checklist |

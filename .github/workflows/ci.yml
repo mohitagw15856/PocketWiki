@@ -64,12 +64,11 @@ jobs:
   firmware-build:
     name: Firmware build (PlatformIO)
     runs-on: ubuntu-latest
-    # The firmware links against the freeink-sdk, whose exact API is still being
-    # verified on device (see docs/HARDWARE_TESTING.md). This job builds the
-    # firmware so regressions are visible, but is not yet a required gate; the
-    # host and companion test jobs are the enforced checks. Remove
-    # continue-on-error once the SDK build is confirmed on hardware.
-    continue-on-error: true
+    # Builds the firmware for the ESP32-C3 target. inkkit and the firmware compile
+    # against the HAL interface in hal/ (see docs/INKKIT_GAPS.md); the HAL bodies
+    # are a compile shim, so a green build verifies that all firmware and inkkit
+    # code compiles and links for the target, not on-device behaviour. Wiring the
+    # HAL to the freeink-sdk drivers is tracked in docs/HARDWARE_TESTING.md.
     steps:
       - uses: actions/checkout@v4
 
