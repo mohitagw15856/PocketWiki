@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pocketwiki"
+version = "1.0.0"
+description = "Build and inspect PocketWiki (.pwa) offline reference archives for the Xteink X4/X3"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "PocketWiki contributors" }]
+keywords = ["e-ink", "xteink", "esp32", "offline", "wikipedia", "reader"]
+
+dependencies = []
+
+[project.optional-dependencies]
+wikipedia = ["requests>=2.25"]
+zim = ["libzim>=3.0"]
+dev = ["pytest>=7", "requests>=2.25"]
+
+[project.scripts]
+pocketwiki = "pocketwiki.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["pocketwiki*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
