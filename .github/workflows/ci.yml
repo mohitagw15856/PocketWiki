@@ -1,0 +1,91 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  core-tests:
+    name: Core C++ tests (host)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install build tools
+        run: sudo apt-get update && sudo apt-get install -y cmake g++
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Configure
+        # inkkit is fetched from GitHub by CMake; the companion (standard library
+        # only) generates the interop fixture during the build.
+        run: cmake -S test -B test/build
+
+      - name: Build
+        run: cmake --build test/build -j
+
+      - name: Test
+        run: ctest --test-dir test/build --output-on-failure
+
+  companion-tests:
+    name: Companion Python tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install test dependencies
+        run: python -m pip install --upgrade pip pytest
+
+      - name: Run pytest
+        working-directory: companion
+        run: python -m pytest -q
+
+      - name: Rebuild the sample archive from source and sanity check it
+        working-directory: companion
+        # A byte for byte comparison is avoided on purpose: zlib output can differ
+        # between versions. Instead the archive is rebuilt and checked
+        # functionally (article count and a search hit), which is what matters.
+        run: |
+          python -m pocketwiki build markdown sample_content -o /tmp/sample.pwa -n "Foundations of Science"
+          python -m pocketwiki inspect /tmp/sample.pwa --search isaac | tee /tmp/inspect.txt
+          grep -q "Articles:     50" /tmp/inspect.txt
+          grep -q "Isaac Newton" /tmp/inspect.txt
+
+  firmware-build:
+    name: Firmware build (PlatformIO)
+    runs-on: ubuntu-latest
+    # The firmware links against the freeink-sdk, whose exact API is still being
+    # verified on device (see docs/HARDWARE_TESTING.md). This job builds the
+    # firmware so regressions are visible, but is not yet a required gate; the
+    # host and companion test jobs are the enforced checks. Remove
+    # continue-on-error once the SDK build is confirmed on hardware.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Cache PlatformIO
+        uses: actions/cache@v4
+        with:
+          path: ~/.platformio
+          key: pio-${{ runner.os }}-${{ hashFiles('platformio.ini') }}
+          restore-keys: pio-${{ runner.os }}-
+
+      - name: Install PlatformIO (pioarduino core)
+        run: python -m pip install -U https://github.com/pioarduino/platformio-core/archive/refs/tags/v6.1.19.zip
+
+      - name: Build firmware
+        run: pio run -e xteink_x4
