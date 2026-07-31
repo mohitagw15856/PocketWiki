@@ -55,14 +55,13 @@ No CrossPoint source is copied into this repository.
 ### The HAL that inkkit requires
 
 inkkit is written against an ecosystem HAL (`HalStorage`, `HalDisplay`,
-`HalGPIO`, `HalPowerManager`) that it does not ship or declare, and which is not
-part of the freeink-sdk either (the SDK ships individual hardware libraries; the
-unifying `Hal*` layer lives in the CrossPoint firmware). So that PocketWiki can
-compile and link as a standalone firmware, `hal/` provides that interface,
-written from scratch against the calls inkkit makes rather than copied from
-CrossPoint. Its bodies are a safe compile shim; wiring them to the freeink-sdk
-drivers is the on-device work tracked in `docs/HARDWARE_TESTING.md`. This is the
-largest gap recorded in `docs/INKKIT_GAPS.md`.
+`HalGPIO`, `HalPowerManager`). Since inkkit v0.1.0-rc1 that layer ships inside
+inkkit itself: the real `Hal*` HAL (adapted from CrossPoint Reader, MIT) plus
+the vendored FreeInk SDK hardware libraries. PocketWiki therefore has no local
+HAL; the pinned `lib_deps` line in `platformio.ini` is the complete device
+layer, and on-device verification is tracked in `docs/HARDWARE_TESTING.md`
+(see also `docs/INKKIT_GAPS.md`, whose section 0 records the history of this
+gap and its resolution).
 
 ## Licence compatibility
 
@@ -94,9 +93,6 @@ src/                      Device firmware (compiled only for the target)
   PocketWikiApp           screen state machine wiring the core to inkkit
   ui/                     Keyboard and ListMenu widgets (portable, host-tested)
   Input, main.cpp         inkkit and HAL wiring
-
-hal/                      HAL interface inkkit requires but does not ship
-                          (compile shim; wire to freeink-sdk on device)
 
 test/                     Native test build (CMake) exercising core + widgets
 docs/                     Format spec, gaps, hardware testing checklist

@@ -10,27 +10,19 @@ Where PocketWiki had to provide something itself, it did so in its **portable
 core** (`core/pocketwiki/`) so the code is host tested and could move into inkkit
 later with little change.
 
-## 0. The HAL layer inkkit is written against (most important)
+## 0. The HAL layer inkkit is written against — RESOLVED in inkkit v0.1.0-rc1
 
-inkkit includes `<HalStorage.h>`, `<HalDisplay.h>`, `<HalGPIO.h>` and
-`<HalPowerManager.h>` and talks to global `Storage`, `display`, `gpio` and
-`powerManager` singletons of those types. Those headers are **not** part of
-inkkit, and they are **not** part of the freeink-sdk either: the freeink-sdk
-ships individual hardware libraries (FreeInkDisplay, SDCardManager, InputManager,
-PowerManager and so on), and the unifying `Hal*` layer lives in the CrossPoint
-firmware's own `lib/hal`. inkkit neither bundles this HAL nor declares it as a
-dependency, so a fresh inkkit based firmware fails to compile with
-`fatal error: HalStorage.h: No such file or directory`.
+Historically inkkit included `<HalStorage.h>`, `<HalDisplay.h>`, `<HalGPIO.h>`
+and `<HalPowerManager.h>` without shipping or declaring them, so a fresh
+inkkit based firmware failed to compile. PocketWiki worked around this with a
+local `hal/` compile shim.
 
-PocketWiki works around this by providing the HAL interface itself in `hal/`,
-derived purely from the calls inkkit makes (no CrossPoint code is copied). The
-method bodies are a safe compile shim, so the firmware compiles and links for the
-ESP32-C3 target; wiring each method to the matching freeink-sdk library is the
-remaining on-device work (see `docs/HARDWARE_TESTING.md`).
-
-The clean fix belongs in inkkit: either bundle a small default HAL, or declare
-the freeink-sdk libraries as dependencies and ship the thin `Hal*` adapters so
-every consumer does not have to reinvent them.
+As of inkkit v0.1.0-rc1 the clean fix has landed in inkkit itself: it vendors
+the real `Hal*` layer (adapted from CrossPoint Reader, MIT) plus the FreeInk
+SDK hardware libraries it wraps, and PocketWiki's shim approach lives on there
+as the optional `INKKIT_HAL_STUB` build flag. PocketWiki's local `hal/`
+directory has been removed and the firmware now builds against the real
+device layer via the single pinned `lib_deps` line in `platformio.ini`.
 
 ## 1. Text and glyph rendering
 
