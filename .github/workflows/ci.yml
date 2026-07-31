@@ -64,11 +64,10 @@ jobs:
   firmware-build:
     name: Firmware build (PlatformIO)
     runs-on: ubuntu-latest
-    # Builds the firmware for the ESP32-C3 target. inkkit and the firmware compile
-    # against the HAL interface in hal/ (see docs/INKKIT_GAPS.md); the HAL bodies
-    # are a compile shim, so a green build verifies that all firmware and inkkit
-    # code compiles and links for the target, not on-device behaviour. Wiring the
-    # HAL to the freeink-sdk drivers is tracked in docs/HARDWARE_TESTING.md.
+    # Builds the firmware for both Xteink targets. The complete device layer
+    # (real HAL + vendored SDK hardware libraries) comes from inkkit, pinned in
+    # platformio.ini. A green build verifies compile-and-link for the target;
+    # on-device behaviour is tracked in docs/HARDWARE_TESTING.md.
     steps:
       - uses: actions/checkout@v4
 
@@ -83,8 +82,27 @@ jobs:
           key: pio-${{ runner.os }}-${{ hashFiles('platformio.ini') }}
           restore-keys: pio-${{ runner.os }}-
 
-      - name: Install PlatformIO (pioarduino core)
-        run: python -m pip install -U https://github.com/pioarduino/platformio-core/archive/refs/tags/v6.1.19.zip
+      - name: Install PlatformIO
+        run: pip install --upgrade platformio
 
-      - name: Build firmware
+      # Environments build one at a time: pio package installs are not safe to
+      # run concurrently against a shared ~/.platformio.
+      - name: Build X4 firmware
         run: pio run -e xteink_x4
+
+      - name: Build X3 firmware
+        run: pio run -e xteink_x3
+
+      - name: Upload X4 artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pocketwiki-xteink_x4-firmware
+          path: .pio/build/xteink_x4/firmware.bin
+          if-no-files-found: error
+
+      - name: Upload X3 artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pocketwiki-xteink_x3-firmware
+          path: .pio/build/xteink_x3/firmware.bin
+          if-no-files-found: error

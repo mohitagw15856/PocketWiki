@@ -13,21 +13,18 @@ is almost always confined to the single file named.
 
 ## Build and SDK wiring
 
-- [ ] **Firmware builds via PlatformIO.** `pio run -e xteink_x4` completes.
-      inkkit and the firmware compile against the HAL interface in `hal/`. This
-      is verified in CI; the shim makes it a real compile check.
-- [ ] **Wire the HAL to the freeink-sdk (the main on-device task).** `hal/`
-      currently provides safe no-op bodies so the firmware compiles and links.
-      Replace them with implementations backed by the freeink-sdk libraries, and
-      add those libraries to `platformio.ini` `lib_deps`:
-      - `HalStorage` and `HalFile` to `SDCardManager` (read archives from SD).
-      - `HalDisplay` to `FreeInkDisplay` (push the framebuffer to the panel).
-      - `HalGPIO` to `InputManager` (real button edges and wake reason).
-      - `HalPowerManager` to `PowerManager` (deep sleep).
-      Each `hal/*.h` method carries a `TODO(hardware-test)` naming its target.
-- [ ] **Hardware singletons.** `src/main.cpp` and `hal/hal_shim.cpp` define the
-      `display`, `gpio`, `powerManager` and `Storage` globals. When wiring the
-      real HAL, confirm the freeink-sdk's own instance names and construction.
+- [x] **Firmware builds via PlatformIO.** `pio run -e xteink_x4` and
+      `pio run -e xteink_x3` complete. The firmware compiles and links against
+      the real device layer vendored in inkkit v0.1.0-rc1 (no local shim), so
+      a green build is a genuine compile-and-link check of real driver code.
+- [ ] **Run the real HAL on hardware (the main on-device task).** The vendored
+      layer wires `HalStorage`/`HalFile` to `SDCardManager`, `HalDisplay` to
+      `FreeInkDisplay`, `HalGPIO` to `InputManager` and `HalPowerManager` to
+      `PowerManager` — real code, never executed on a PocketWiki device.
+      Verify SD reads, panel refresh, button edges and deep sleep on device.
+- [ ] **Hardware singletons.** The `display`, `gpio`, `powerManager` and
+      `Storage` globals are defined by inkkit's vendored HAL; `src/main.cpp`
+      declares them `extern`. Confirm construction order on real hardware.
 - [ ] **inkkit inherited SDK TODOs.** inkkit's own `TODO(hardware-test)` notes
       cover the display method and constant names, the Storage and `HalFile`
       API (including directory iteration and append flags), the GPIO enums and
